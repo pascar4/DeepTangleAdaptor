@@ -1,0 +1,17 @@
+diff --git a/deeptangle/dataset/io.py b/deeptangle/dataset/io.py
+index b48cc9e..4a92c24 100644
+--- a/deeptangle/dataset/io.py
++++ b/deeptangle/dataset/io.py
+@@ -1,11 +1,11 @@
+ from skimage import color
+-import skvideo.io
+ 
+ import numpy as np
+ import jax.numpy as jnp
+ 
+ 
+ def read_clip_from_video(filepath, start_time, end_time, fps, size, origin):
++    import skvideo.io  # lazy: unused by this pipeline
+     video = skvideo.io.vreader(filepath)
+ 
+     start_frame = int(start_time * fps)

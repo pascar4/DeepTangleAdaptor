@@ -1,0 +1,19 @@
+diff --git a/deeptangle/tracking.py b/deeptangle/tracking.py
+index b8bd202..eb7b1d8 100644
+--- a/deeptangle/tracking.py
++++ b/deeptangle/tracking.py
+@@ -144,8 +144,13 @@ def identity_assignment(
+     """
+ 
+     def transform(pred):
++        # PATCH: a frame with zero detections crashes the original, because
++        # reshape(0, -1) cannot infer the free dimension from an empty array.
++        # Over a full recording empty frames do occur.
+         N = len(pred.w)
+-        return np.concatenate((pred.w.reshape(N, -1), pred.p), axis=-1)
++        w = np.asarray(pred.w).reshape(N, int(np.prod(pred.w.shape[1:])))
++        p = np.asarray(pred.p).reshape(N, int(np.prod(pred.p.shape[1:])))
++        return np.concatenate((w, p), axis=-1)
+ 
+     flatten_predictions = list(map(transform, predictions))
+ 

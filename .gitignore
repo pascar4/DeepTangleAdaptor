@@ -1,0 +1,34 @@
+# Environment
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+
+# Upstream repo - cloned by setup, see patches/
+vendor/
+
+# Released checkpoint - 170 MB, not ours to redistribute.
+# Download with:
+#   curl -L https://sid.erda.dk/share_redirect/cEjIpG1yQl -o weights.zip && unzip weights.zip
+weights/
+weights.zip
+
+# Source recordings stay on Drive; nothing here writes to them
+*.mp4
+*.avi
+
+# Pipeline outputs
+results/
+results_full/
+results_iso/
+iso_test/
+early/
+sweep/
+out/
+annot/
+annot_one/
+*_centerlines.csv
+*_overlay.mp4
+
+# Keep the hand annotations
+!data/ground_truth/*.csv
