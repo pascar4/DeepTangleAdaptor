@@ -68,35 +68,44 @@ support a time-to-paralysis measurement. Fix the linking first.
 git clone https://github.com/pascar4/DeepTangleAdaptor.git
 cd DeepTangleAdaptor
 
-# Python 3.12. JAX has no CUDA wheels on Windows - CPU only unless you use WSL2.
-uv venv --python 3.12 .venv
-VIRTUAL_ENV=.venv uv pip install -r requirements.txt
+# Python 3.12 recommended (3.10-3.13 tested; JAX has no 3.14 wheels yet).
+# JAX has no CUDA wheels on Windows - CPU only there unless you use WSL2.
+python -m venv .venv                 # or: uv venv --python 3.12 .venv
+.venv/Scripts/python.exe -m pip install -r requirements.txt     # Windows
+# .venv/bin/python -m pip install -r requirements.txt           # macOS/Linux
 
-# Upstream repo + the two patches in patches/
-git clone --depth 1 https://github.com/kirkegaardlab/deeptangle.git vendor/deeptangle
-cd vendor/deeptangle && git apply ../../patches/*.diff && cd ../..
-VIRTUAL_ENV=.venv uv pip install -e vendor/deeptangle
-
-# Released checkpoint (170 MB)
-curl -L https://sid.erda.dk/share_redirect/cEjIpG1yQl -o weights.zip && unzip weights.zip
+# Everything that is NOT in the repo - checkpoint, upstream clone, patches:
+.venv/Scripts/python.exe bootstrap.py
+.venv/Scripts/python.exe -m pip install -e vendor/deeptangle
 ```
 
+`bootstrap.py` downloads the 164 MB checkpoint, clones upstream de(ep)tangle,
+applies the two patches in `patches/`, and verifies the environment. Pure
+stdlib - no curl, wget or unzip needed. Safe to re-run; anything already in
+place is skipped.
+
+**The checkpoint is deliberately not in this repository.** It is 164 MB and it
+belongs to the de(ep)tangle authors. Running any script without it now fails
+with an explanation and a pointer to `bootstrap.py` rather than a bare
+`FileNotFoundError`.
+
 Then, on any new recording — **always measure first**, never assume parameters
-carry over:
+carry over between rigs:
 
 ```bash
 .venv/Scripts/python.exe scripts/measure.py "path/to/video.mp4"
-.venv/Scripts/python.exe scripts/run.py  "path/to/video.mp4" --out results --video-out
+.venv/Scripts/python.exe scripts/run.py     "path/to/video.mp4" --out results --video-out
 ```
 
+On macOS/Linux substitute `.venv/bin/python` for `.venv/Scripts/python.exe`
+throughout.
+
 Runtime on CPU: ~8 min per 343 s sparse recording, ~70 min per 359 s dense one.
-Cost scales with worm count (geometric NMS is O(n²) and refinement is per-spline).
+Cost scales with worm count (geometric NMS is O(n²), refinement is per-spline).
 
 **Data lives on Google Drive**, not in this repo:
-`G:\My Drive\C_elegans_video_dataset\Cropped\Main\Videos\` — 23 `.mp4` files.
-Nothing in this pipeline writes to Drive.
-
----
+`G:\My Drive\C_elegans_video_dataset\Cropped\Main\Videos\` — 23 `.mp4`
+files. Nothing in this pipeline writes to Drive.
 
 ## 4. Work packages
 

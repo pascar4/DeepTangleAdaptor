@@ -21,6 +21,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import deeptangle as dt
 from dtpipe import preprocess as pp
+from dtpipe.checks import require_weights
 
 
 def main():
@@ -34,6 +35,9 @@ def main():
     ap.add_argument("--trim-right", type=float, default=0.10)
     ap.add_argument("--outdir", default="out")
     a = ap.parse_args()
+
+    # fail early and legibly if the checkpoint was never fetched
+    require_weights(a.model)
 
     os.makedirs(a.outdir, exist_ok=True)
 

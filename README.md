@@ -9,6 +9,15 @@ head/tail polarity is not implemented yet (see Limitations).
 
 ## Quick start
 
+First-time setup (downloads the 164 MB checkpoint, clones and patches
+upstream de(ep)tangle, checks the environment):
+
+```bash
+python bootstrap.py
+```
+
+Then:
+
 ```bash
 .venv/Scripts/python.exe scripts/run.py "path/to/video.mp4" --out results --video-out
 ```

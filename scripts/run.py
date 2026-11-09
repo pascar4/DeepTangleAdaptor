@@ -25,6 +25,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import deeptangle as dt
 from dtpipe import postprocess as post
 from dtpipe import preprocess as pp
+from dtpipe.checks import require_weights
 
 PALETTE = [(66, 133, 244), (219, 68, 55), (15, 157, 88),
            (244, 180, 0), (171, 71, 188), (0, 172, 193)]
@@ -116,6 +117,9 @@ def main():
     ap.add_argument("--no-refine", action="store_true",
                     help="skip medial-axis tip refinement")
     a = ap.parse_args()
+
+    # fail early and legibly if the checkpoint was never fetched
+    require_weights(a.model)
 
     os.makedirs(a.out, exist_ok=True)
     stem = os.path.splitext(os.path.basename(a.video))[0]
